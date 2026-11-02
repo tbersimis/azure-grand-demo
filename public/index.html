@@ -145,6 +145,12 @@
     font-size: .95rem; color: var(--muted);
   }
   .slot-note code { font-size: .85rem; background: #E8EEF0; padding: .1rem .35rem; border-radius: 4px; }
+  /* Keep the Click-to-Call widget inside the web-call card instead of floating at the window edge. */
+  #c2c-slot { position: relative; transform: translateZ(0); flex-wrap: wrap; }
+  #c2c-slot click-to-call-widget {
+    position: static !important; inset: auto !important; transform: none !important;
+    display: block; margin: 0 !important;
+  }
   .c2c-status { margin: .75rem 0 0; font-size: .92rem; color: var(--bloom); }
   .call-card .alt { margin: 1.5rem 0 0; font-size: .95rem; }
   .asks { margin: 0; padding: 0; list-style: none; }
@@ -314,6 +320,40 @@
       }
     });
 
+    // The widget's floating mode pins its icon to the browser window (position: fixed).
+    // Turn every such element inside the widget back into normal page flow, so it
+    // appears in the web-call card, and repeat whenever the widget redraws itself.
+    function unpin(root) {
+      if (!root) return;
+      var nodes = root.querySelectorAll('*');
+      for (var i = 0; i < nodes.length; i++) {
+        var el = nodes[i];
+        if (getComputedStyle(el).position === 'fixed') {
+          el.style.setProperty('position', 'static', 'important');
+          ['top', 'right', 'bottom', 'left'].forEach(function (side) { el.style.setProperty(side, 'auto', 'important'); });
+          el.style.setProperty('transform', 'none', 'important');
+          el.style.setProperty('margin', '0', 'important');
+        }
+        if (el.shadowRoot) unpin(el.shadowRoot);
+      }
+    }
+    function keepInline(widget) {
+      if (!widget) return;
+      var queued = false;
+      function run() {
+        queued = false;
+        unpin(widget.shadowRoot);
+        unpin(widget);
+      }
+      function queue() { if (!queued) { queued = true; requestAnimationFrame(run); } }
+      run();
+      var obs = new MutationObserver(queue);
+      if (widget.shadowRoot) obs.observe(widget.shadowRoot, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
+      obs.observe(widget, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
+      // The widget may build its contents a moment after it starts.
+      [300, 1000, 2500].forEach(function (ms) { setTimeout(queue, ms); });
+    }
+
     function exists(path) {
       return fetch(path, { method: 'HEAD', cache: 'no-store' }).then(function (r) { return r.status; });
     }
@@ -349,6 +389,9 @@
         }, 8000);
 
         if (window.customElements && customElements.whenDefined) {
+          customElements.whenDefined('click-to-call-widget').then(function () {
+            keepInline(document.querySelector('click-to-call-widget'));
+          });
           customElements.whenDefined('click-to-call-widget').then(function () {
             setTimeout(function () {
               var w = document.querySelector('click-to-call-widget');

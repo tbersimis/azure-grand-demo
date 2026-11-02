@@ -145,6 +145,7 @@
     font-size: .95rem; color: var(--muted);
   }
   .slot-note code { font-size: .85rem; background: #E8EEF0; padding: .1rem .35rem; border-radius: 4px; }
+  .c2c-status { margin: .75rem 0 0; font-size: .92rem; color: var(--bloom); }
   .call-card .alt { margin: 1.5rem 0 0; font-size: .95rem; }
   .asks { margin: 0; padding: 0; list-style: none; }
   .asks li { padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,.15); }
@@ -266,6 +267,7 @@
               Web calling isn’t connected yet. Add your Live Hub Click-to-Call files to <code>public/c2c/</code> and redeploy.
             </div>
           </div>
+          <p class="c2c-status" id="c2c-status" role="status" hidden></p>
 
           <p class="alt">Prefer the phone? Call the front desk on <a href="tel:+441313671619">+44 131 367 1619</a>.</p>
         </div>
@@ -291,29 +293,73 @@
 </footer>
 
 <script>
-  // Load the Live Hub Click-to-Call widget if its files have been added to /c2c/.
+  // Click-to-Call loader with on-page diagnostics.
+  // c2c-config.js (your adapted basic.js) loads click-to-call-widget.js itself,
+  // exactly as AudioCodes' snippet does, so this page only loads the config file.
   (function () {
-    function load(src) {
-      return new Promise(function (resolve, reject) {
-        var s = document.createElement('script');
-        s.src = src;
-        s.onload = resolve;
-        s.onerror = function () { reject(new Error(src)); };
-        document.body.appendChild(s);
-      });
+    var statusEl = document.getElementById('c2c-status');
+    var note = document.getElementById('c2c-note');
+    function say(text) {
+      if (note && note.isConnected) { note.textContent = text; return; }
+      if (statusEl) { statusEl.hidden = false; statusEl.textContent = text; }
     }
-    fetch('/c2c/click-to-call-widget.js', { method: 'HEAD' })
-      .then(function (r) {
-        if (!r.ok) return;
-        var note = document.getElementById('c2c-note');
-        return load('/c2c/click-to-call-widget.js')
-          .then(function () { return load('/c2c/c2c-config.js'); })
-          .then(function () { if (note) note.remove(); })
-          .catch(function (err) {
-            if (note) note.textContent = 'The web call widget didn’t load (' + err.message + '). Check the files in public/c2c/.';
+    function done() { if (statusEl) statusEl.hidden = true; }
+    var lastError = '';
+
+    // Show script errors from the widget files on the page itself.
+    window.addEventListener('error', function (e) {
+      if (e && e.filename && e.filename.indexOf('/c2c/') !== -1) {
+        lastError = 'Error in ' + e.filename.split('/').pop() + ' (line ' + e.lineno + '): ' + e.message;
+        say(lastError);
+      }
+    });
+
+    function exists(path) {
+      return fetch(path, { method: 'HEAD', cache: 'no-store' }).then(function (r) { return r.status; });
+    }
+
+    exists('/c2c/click-to-call-widget.js').then(function (mainStatus) {
+      if (mainStatus !== 200) {
+        say('Web calling isn’t connected yet: /c2c/click-to-call-widget.js was not found (HTTP ' + mainStatus + '). Upload it to public/c2c/ in GitHub.');
+        return;
+      }
+      return exists('/c2c/c2c-config.js').then(function (cfgStatus) {
+        if (cfgStatus !== 200) {
+          say('Found click-to-call-widget.js, but /c2c/c2c-config.js is missing (HTTP ' + cfgStatus + '). Upload it to public/c2c/ in GitHub.');
+          return;
+        }
+        say('Loading the web call button…');
+        var s = document.createElement('script');
+        s.src = '/c2c/c2c-config.js';
+        s.onerror = function () { say('/c2c/c2c-config.js could not be loaded.'); };
+        document.body.appendChild(s);
+
+        var timer = setTimeout(function () {
+          var w = document.querySelector('click-to-call-widget');
+          if (!w) {
+            say(lastError || 'c2c-config.js loaded but didn’t add the widget. Most often this is a typo (a missing quote or comma) where the values were filled in.');
+          } else if (!customElements.get('click-to-call-widget')) {
+            say(lastError || 'The widget was added, but click-to-call-widget.js didn’t start. Press F12 and look at the Console tab for the error.');
+          } else {
+            var r = w.getBoundingClientRect();
+            if (r.width === 0 && r.height === 0) {
+              say('The widget started, but it has no size in this card. Look for the call button in a corner of the page.');
+            } else { done(); }
+          }
+        }, 8000);
+
+        if (window.customElements && customElements.whenDefined) {
+          customElements.whenDefined('click-to-call-widget').then(function () {
+            setTimeout(function () {
+              var w = document.querySelector('click-to-call-widget');
+              if (w && w.getBoundingClientRect().height > 0) { clearTimeout(timer); done(); }
+            }, 500);
           });
-      })
-      .catch(function () {});
+        }
+      });
+    }).catch(function (err) {
+      say('Couldn’t check the widget files: ' + err.message);
+    });
   })();
 </script>
 </body>

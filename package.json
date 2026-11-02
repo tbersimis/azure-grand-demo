@@ -1,0 +1,16 @@
+{
+  "name": "azure-grand-demo",
+  "version": "1.0.0",
+  "description": "Azure Grand Hotel demo site + mini PMS for an AudioCodes Live Hub AI agent",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "4.19.2"
+  }
+}

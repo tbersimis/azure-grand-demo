@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Azure Grand Hotel</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌊</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0B3954;
+    --ink-deep: #072638;
+    --whitewash: #F7F9FA;
+    --sea: #1F7A8C;
+    --pebble: #C5CED1;
+    --bloom: #A8326E;
+    --text: #1B2A33;
+    --muted: #51636D;
+    --display: "Gilda Display", "Didot", Georgia, serif;
+    --body: "Manrope", "Segoe UI", system-ui, sans-serif;
+    --measure: 62ch;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0;
+    background: var(--whitewash);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  a { color: var(--sea); }
+  :focus-visible { outline: 3px solid var(--bloom); outline-offset: 3px; }
+  .wrap { width: min(1120px, 100% - 3rem); margin-inline: auto; }
+
+  /* header */
+  .bar {
+    position: sticky; top: 0; z-index: 5;
+    background: rgba(247, 249, 250, .92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--pebble);
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 64px; }
+  .brand { font-family: var(--display); font-size: 1.35rem; color: var(--ink); text-decoration: none; }
+  .bar nav { display: flex; gap: 1.5rem; }
+  .bar nav a { color: var(--text); text-decoration: none; font-size: .95rem; }
+  .bar nav a:hover { color: var(--sea); }
+  .bar .call-link {
+    background: var(--ink); color: #fff; padding: .55rem 1rem; border-radius: 999px; font-weight: 500;
+  }
+  .bar .call-link:hover { background: var(--sea); color: #fff; }
+  @media (max-width: 760px) { .bar nav a:not(.call-link) { display: none; } }
+
+  /* hero */
+  .hero { background: var(--ink); color: #fff; overflow: hidden; }
+  .hero .wrap { display: grid; grid-template-columns: 1.15fr .85fr; gap: 3rem; align-items: end; padding-block: 5rem 0; }
+  .hero h1 {
+    font-family: var(--display); font-weight: 400;
+    font-size: clamp(3rem, 8vw, 6.25rem); line-height: .95; letter-spacing: -.01em;
+    margin: 0 0 1.5rem;
+  }
+  .hero p { max-width: 42ch; color: #D6E4EA; font-size: 1.15rem; margin: 0 0 2.5rem; }
+  .hero .actions { display: flex; flex-wrap: wrap; gap: .75rem; padding-bottom: 4rem; }
+  .btn {
+    display: inline-flex; align-items: center; gap: .5rem;
+    font: 500 1rem var(--body); text-decoration: none;
+    padding: .85rem 1.4rem; border-radius: 999px; border: 1.5px solid transparent; cursor: pointer;
+  }
+  .btn-bloom { background: var(--bloom); color: #fff; }
+  .btn-bloom:hover { background: #8E2A5D; }
+  .btn-ghost { border-color: rgba(255,255,255,.5); color: #fff; }
+  .btn-ghost:hover { border-color: #fff; }
+  .hero-arch {
+    align-self: end; aspect-ratio: 3 / 4; width: 100%;
+    border-radius: 999px 999px 0 0;
+    background:
+      radial-gradient(circle at 70% 34%, #F5D7A1 0 7%, transparent 7.5%),
+      linear-gradient(to bottom, #9FD0DB 0 48%, #2C8BA0 48% 62%, #1F7A8C 62% 100%);
+    border: 10px solid var(--whitewash); border-bottom: 0;
+    position: relative;
+  }
+  .hero-arch::after {
+    content: ""; position: absolute; inset: auto 0 0 0; height: 22%;
+    background: var(--whitewash);
+    clip-path: polygon(0 40%, 100% 0, 100% 100%, 0 100%);
+  }
+  @media (max-width: 820px) {
+    .hero .wrap { grid-template-columns: 1fr; padding-top: 3.5rem; }
+    .hero-arch { max-width: 300px; justify-self: center; }
+    .hero .actions { padding-bottom: 1rem; }
+  }
+
+  section { padding-block: 5.5rem; }
+  h2 { font-family: var(--display); font-weight: 400; color: var(--ink); font-size: clamp(2rem, 4vw, 2.9rem); line-height: 1.1; margin: 0 0 1rem; }
+  h3 { font-family: var(--display); font-weight: 400; color: var(--ink); font-size: 1.5rem; margin: 0 0 .4rem; }
+  .lede { max-width: var(--measure); color: var(--muted); margin: 0 0 3rem; }
+
+  /* story */
+  .story .wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+  .story p { max-width: var(--measure); margin: 0 0 1rem; }
+  .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem 2rem; margin: 0; }
+  .facts dt { color: var(--muted); font-size: .9rem; }
+  .facts dd { margin: 0; font-family: var(--display); font-size: 1.6rem; color: var(--ink); }
+  @media (max-width: 820px) { .story .wrap { grid-template-columns: 1fr; gap: 2rem; } }
+
+  /* rooms */
+  .rooms { background: #fff; border-block: 1px solid var(--pebble); }
+  .room-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; }
+  .room .view {
+    aspect-ratio: 4 / 5; border-radius: 999px 999px 6px 6px; margin-bottom: 1.25rem;
+    border: 1px solid var(--pebble);
+  }
+  .room:nth-child(1) .view { background: linear-gradient(#BFE3EA 0 52%, #3B97AA 52% 70%, #E9E2D3 70%); }
+  .room:nth-child(2) .view { background: radial-gradient(circle at 30% 30%, #F6D9A8 0 9%, transparent 9.5%), linear-gradient(#F1C9A5 0 45%, #2F8296 45% 66%, #E3DACB 66%); }
+  .room:nth-child(3) .view { background: radial-gradient(circle at 75% 25%, #F7F0DC 0 6%, transparent 6.5%), linear-gradient(#123F5E 0 50%, #1C5F7A 50% 68%, #CFC4B2 68%); }
+  .room p { color: var(--muted); margin: 0 0 .5rem; }
+  .room .price { color: var(--ink); font-weight: 700; }
+  @media (max-width: 820px) { .room-grid { grid-template-columns: 1fr; max-width: 420px; } }
+
+  /* stay */
+  .stay-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem 4rem; margin: 0; padding: 0; list-style: none; }
+  .stay-list li { border-top: 2px solid var(--ink); padding-top: 1rem; }
+  .stay-list p { margin: 0; color: var(--muted); max-width: 48ch; }
+  @media (max-width: 700px) { .stay-list { grid-template-columns: 1fr; } }
+
+  /* concierge */
+  .concierge { background: var(--ink-deep); color: #fff; }
+  .concierge h2 { color: #fff; }
+  .concierge .lede { color: #C9DAE1; }
+  .concierge-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 3rem; align-items: start; }
+  .call-card {
+    background: var(--whitewash); color: var(--text);
+    border-radius: 28px 28px 8px 8px; padding: 2.25rem;
+  }
+  .call-card h3 { margin-bottom: .75rem; }
+  .call-card p { color: var(--muted); margin: 0 0 1.5rem; }
+  #c2c-slot { min-height: 64px; display: flex; align-items: center; }
+  .slot-note {
+    width: 100%; border: 1.5px dashed var(--pebble); border-radius: 12px; padding: 1rem 1.1rem;
+    font-size: .95rem; color: var(--muted);
+  }
+  .slot-note code { font-size: .85rem; background: #E8EEF0; padding: .1rem .35rem; border-radius: 4px; }
+  .call-card .alt { margin: 1.5rem 0 0; font-size: .95rem; }
+  .asks { margin: 0; padding: 0; list-style: none; }
+  .asks li { padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,.15); }
+  .asks li:first-child { padding-top: 0; }
+  .asks strong { display: block; font-weight: 500; }
+  .asks span { color: #A9C2CC; font-size: .95rem; }
+  @media (max-width: 820px) { .concierge-grid { grid-template-columns: 1fr; } }
+
+  footer { padding-block: 3rem calc(3rem + env(safe-area-inset-bottom, 0px)); color: var(--muted); font-size: .92rem; }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; }
+  footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="#top">Azure Grand Hotel</a>
+    <nav aria-label="Main">
+      <a href="#story">Our story</a>
+      <a href="#rooms">Rooms</a>
+      <a href="#stay">Your stay</a>
+      <a class="call-link" href="#concierge">Call the concierge</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" aria-labelledby="hero-title" style="padding:0">
+    <div class="wrap">
+      <div>
+        <h1 id="hero-title">Azure Grand Hotel</h1>
+        <p>Whitewashed terraces above the Aegean, and a concierge who picks up at any hour, in your language.</p>
+        <div class="actions">
+          <a class="btn btn-bloom" href="#concierge">Speak to the concierge</a>
+          <a class="btn btn-ghost" href="#rooms">See the rooms</a>
+        </div>
+      </div>
+      <div class="hero-arch" role="img" aria-label="Sea view through an arched window"></div>
+    </div>
+  </section>
+
+  <section id="story" class="story">
+    <div class="wrap">
+      <div>
+        <h2>A century on the cliff edge</h2>
+        <p>The Azure Grand opened in 1924 as a handful of rooms for sailors waiting out the meltemi. Today it is 180 rooms and suites, three restaurants and a pool that ends where the sea begins.</p>
+        <p>What hasn't changed is the idea that a guest should never have to wait for help. Ring the concierge from your room, your phone or this page, and your request goes straight to the team who will bring it.</p>
+      </div>
+      <dl class="facts">
+        <div><dt>Rooms and suites</dt><dd>180</dd></div>
+        <div><dt>Concierge</dt><dd>24 hours</dd></div>
+        <div><dt>Restaurants</dt><dd>3</dd></div>
+        <div><dt>Typical response</dt><dd>20 min</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section id="rooms" class="rooms">
+    <div class="wrap">
+      <h2>Rooms and suites</h2>
+      <p class="lede">Every room faces the water. The difference is how much of it you want.</p>
+      <div class="room-grid">
+        <article class="room">
+          <div class="view" role="img" aria-label="Daytime sea view"></div>
+          <h3>Sea View Room</h3>
+          <p>Floor-to-ceiling windows and a small balcony over the bay.</p>
+          <p class="price">From €320 a night</p>
+        </article>
+        <article class="room">
+          <div class="view" role="img" aria-label="Sunset sea view"></div>
+          <h3>Junior Suite</h3>
+          <p>A separate sitting room and a terrace built for long sunsets.</p>
+          <p class="price">From €580 a night</p>
+        </article>
+        <article class="room">
+          <div class="view" role="img" aria-label="Night sea view under the moon"></div>
+          <h3>Cliff Penthouse</h3>
+          <p>A wraparound terrace, private plunge pool and a butler on call.</p>
+          <p class="price">From €1,800 a night</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="stay">
+    <div class="wrap">
+      <h2>During your stay</h2>
+      <p class="lede">Anything on this list is one call away. Tell the concierge your room number and what you need.</p>
+      <ul class="stay-list">
+        <li><h3>Housekeeping</h3><p>Room cleaning, fresh linen, turndown and an extra bed for the little ones.</p></li>
+        <li><h3>In-room extras</h3><p>Towels, pillows, bottled water, toiletries and breakfast on the balcony.</p></li>
+        <li><h3>Maintenance</h3><p>Air conditioning, hot water, the TV or anything else that isn't working as it should.</p></li>
+        <li><h3>Spa and fitness</h3><p>Book the gym with a trainer or a treatment at the cliffside spa.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="concierge" class="concierge" aria-labelledby="concierge-title">
+    <div class="wrap">
+      <h2 id="concierge-title">Speak to the concierge</h2>
+      <p class="lede">Call straight from your browser. No phone and no app needed, just allow the microphone when asked.</p>
+      <div class="concierge-grid">
+        <div class="call-card">
+          <h3>Web call</h3>
+          <p>Our AI concierge answers in your language, confirms your room number and sends your request to the team right away.</p>
+
+          <!--
+            CLICK-TO-CALL WIDGET
+            The widget files come from your Live Hub SIP connection (Client Applications > Click-to-Call (WebRTC)).
+            Put them in public/c2c/ as described in README.md:
+              public/c2c/click-to-call-widget.js   (main file from the download)
+              public/c2c/c2c-config.js             (content of basic.js / advanced.js, without the <script> tags)
+            If your download's example HTML includes a widget tag or a specific load order,
+            paste that markup inside #c2c-slot below and keep the same order.
+          -->
+          <div id="c2c-slot">
+            <div class="slot-note" id="c2c-note">
+              Web calling isn’t connected yet. Add your Live Hub Click-to-Call files to <code>public/c2c/</code> and redeploy.
+            </div>
+          </div>
+
+          <p class="alt">Prefer the phone? Call the front desk on <a href="tel:+441313671619">+44 131 367 1619</a>.</p>
+        </div>
+
+        <div>
+          <ul class="asks" aria-label="Things you can ask for">
+            <li><strong>“Could I get extra towels and pillows?”</strong><span>In-room extras, usually within 20 minutes</span></li>
+            <li><strong>“The air conditioning isn’t working.”</strong><span>Sent to maintenance, flagged urgent if it’s serious</span></li>
+            <li><strong>“Please clean my room this afternoon.”</strong><span>Housekeeping with the time you prefer</span></li>
+            <li><strong>“I’d like to change my check-out.”</strong><span>Passed straight to the front desk</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Azure Grand Hotel. Powered by AudioCodes Live Hub.</span>
+    <a href="/pms/">Staff PMS</a>
+  </div>
+</footer>
+
+<script>
+  // Load the Live Hub Click-to-Call widget if its files have been added to /c2c/.
+  (function () {
+    function load(src) {
+      return new Promise(function (resolve, reject) {
+        var s = document.createElement('script');
+        s.src = src;
+        s.onload = resolve;
+        s.onerror = function () { reject(new Error(src)); };
+        document.body.appendChild(s);
+      });
+    }
+    fetch('/c2c/click-to-call-widget.js', { method: 'HEAD' })
+      .then(function (r) {
+        if (!r.ok) return;
+        var note = document.getElementById('c2c-note');
+        return load('/c2c/click-to-call-widget.js')
+          .then(function () { return load('/c2c/c2c-config.js'); })
+          .then(function () { if (note) note.remove(); })
+          .catch(function (err) {
+            if (note) note.textContent = 'The web call widget didn’t load (' + err.message + '). Check the files in public/c2c/.';
+          });
+      })
+      .catch(function () {});
+  })();
+</script>
+</body>
+</html>
